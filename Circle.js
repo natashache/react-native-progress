@@ -58,17 +58,10 @@ export class ProgressCircle extends Component {
     allowFontScaling: true,
   };
 
-  constructor(props, context) {
-    super(props, context);
-
-    this.progressValue = 0;
-  }
-
   componentDidMount() {
     if (this.props.animated) {
       this.props.progress.addListener(event => {
-        this.progressValue = event.value;
-        if (this.props.showsText || this.progressValue === 1) {
+        if (this.props.showsText || event.value === 1) {
           this.forceUpdate();
         }
       });
@@ -112,7 +105,8 @@ export class ProgressCircle extends Component {
 
     const Surface = rotation ? AnimatedSurface : ARTSurface;
     const Shape = animated ? AnimatedArc : Arc;
-    const progressValue = animated ? this.progressValue : progress;
+    // eslint-disable-next-line no-underscore-dangle
+    const progressValue = animated ? progress.__getValue() : progress;
     const angle = animated
       ? Animated.multiply(progress, CIRCLE)
       : progress * CIRCLE;
@@ -204,10 +198,8 @@ export class ProgressCircle extends Component {
             >
               {formatText(progressValue)}
             </Text>
-          </View>
-        ) : (
-          false
-        )}
+            </View>
+        ) : false}
         {children}
       </View>
     );
